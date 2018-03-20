@@ -143,14 +143,20 @@ void print_pixels(Image img)
   }
 }
 
-void read_pixels(Image img)
+Image read_pixels()
 {
+  Image img;
+  char p3[4];
+  scanf("%s", p3);
   // read all pixels of image
   for (unsigned int i = 0; i < img.height; ++i)
   {
     for (unsigned int j = 0; j < img.width; ++j)
-      scanf("%hu %hu %hu", &img.pixel[i][j][RED], &img.pixel[i][j][GREEN], &img.pixel[i][j][BLUE]);
+      scanf("%hu %hu %hu", &img.pixel[i][j][RED],
+                          &img.pixel[i][j][GREEN],
+                          &img.pixel[i][j][BLUE]);
   }
+  return img;
 }
 
 void sepia(Image img)
@@ -164,34 +170,23 @@ void sepia(Image img)
       pixel[GREEN] = img.pixel[x][j][GREEN];
       pixel[BLUE] = img.pixel[x][j][BLUE];
 
-      int p =  pixel[RED] * .393 + pixel[GREEN] * .769 + pixel[BLUE] * .189;
-      int minor_r = (255 >  p) ? p : 255;
+      int pixel_aux = pixel[RED] * .393 + pixel[GREEN] * .769 + pixel[BLUE] * .189;
+      int minor_r = (255 > pixel_aux) ? pixel_aux : 255;
       img.pixel[x][j][RED] = minor_r;
 
-      p =  pixel[RED] * .349 + pixel[GREEN] * .686 + pixel[BLUE] * .168;
-      minor_r = (255 >  p) ? p : 255;
+      pixel_aux =  pixel[RED] * .349 + pixel[GREEN] * .686 + pixel[BLUE] * .168;
+      minor_r = (255 > pixel_aux) ? pixel_aux : 255;
       img.pixel[x][j][GREEN] = minor_r;
 
-      p =  pixel[RED] * .272 + pixel[GREEN] * .534 + pixel[BLUE] * .131;
-      minor_r = (255 >  p) ? p : 255;
+      pixel_aux =  pixel[RED] * .272 + pixel[GREEN] * .534 + pixel[BLUE] * .131;
+      minor_r = (255 > pixel_aux) ? pixel_aux : 255;
       img.pixel[x][j][BLUE] = minor_r;
     }
   }
 }
 
-int main()
+void options_image(Image img)
 {
-  Image img;
-
-  // read type of image
-  char p3[4];
-  scanf("%s", p3);
-
-  // read width height and color of image
-  int max_color;
-  scanf("%u %u %d", &img.width, &img.height, &max_color);
-
-  read_pixels(img);
   int n_options;
   scanf("%d", &n_options);
 
@@ -286,7 +281,14 @@ int main()
       }
     }
   }
+}
 
+int main()
+{
+  Image img;
+  img = read_pixels();
+  int max_color;
+  scanf("%u %u %d", &img.width, &img.height, &max_color);
   printf("P3\n");
   printf("%u %u\n255\n", img.width, img.height);
   print_pixels(img);
