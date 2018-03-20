@@ -185,6 +185,46 @@ void sepia(Image img)
   }
 }
 
+Image image_mirror(Image img)
+{
+  int horizontal = 0;
+  scanf("%d", &horizontal);
+
+  int width = img.width, height = img.height;
+
+  if (horizontal == 1)
+    width /= 2;
+  else
+    height /= 2;
+
+  for (int i2 = 0; i2 < height; ++i2)
+  {
+    for (int j = 0; j < width; ++j)
+    {
+      int x = i2, y = j;
+
+      if (horizontal == 1)
+        y = img.width - 1 - j;
+      else
+        x = img.height - 1 - i2;
+
+      Pixel aux1;
+      aux1.red = img.pixel[i2][j][RED];
+      aux1.green = img.pixel[i2][j][GREEN];
+      aux1.blue = img.pixel[i2][j][BLUE];
+
+      img.pixel[i2][j][0] = img.pixel[x][y][RED];
+      img.pixel[i2][j][1] = img.pixel[x][y][GREEN];
+      img.pixel[i2][j][2] = img.pixel[x][y][BLUE];
+
+      img.pixel[x][y][0] = aux1.red;
+      img.pixel[x][y][1] = aux1.green;
+      img.pixel[x][y][2] = aux1.blue;
+    }
+  }
+  return img;
+}
+
 void options_image(Image img)
 {
   int n_options;
@@ -227,41 +267,7 @@ void options_image(Image img)
       }
       case 5:
       { // Espelhamento
-        int horizontal = 0;
-        scanf("%d", &horizontal);
-
-        int width = img.width, height = img.height;
-
-        if (horizontal == 1)
-          width /= 2;
-        else
-          height /= 2;
-
-        for (int i2 = 0; i2 < height; ++i2)
-        {
-          for (int j = 0; j < width; ++j)
-          {
-            int x = i2, y = j;
-
-            if (horizontal == 1)
-              y = img.width - 1 - j;
-            else
-              x = img.height - 1 - i2;
-
-            Pixel aux1;
-            aux1.red = img.pixel[i2][j][RED];
-            aux1.green = img.pixel[i2][j][GREEN];
-            aux1.blue = img.pixel[i2][j][BLUE];
-
-            img.pixel[i2][j][0] = img.pixel[x][y][RED];
-            img.pixel[i2][j][1] = img.pixel[x][y][GREEN];
-            img.pixel[i2][j][2] = img.pixel[x][y][BLUE];
-
-            img.pixel[x][y][0] = aux1.red;
-            img.pixel[x][y][1] = aux1.green;
-            img.pixel[x][y][2] = aux1.blue;
-          }
-        }
+        img = image_mirror(img);
         break;
       }
       case 6:
