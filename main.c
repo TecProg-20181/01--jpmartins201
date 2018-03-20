@@ -24,16 +24,6 @@ int max(int a, int b)
   return b;
 }
 
-int equal_pixel(Pixel p1, Pixel p2)
-{
-  if (p1.red == p2.red &&
-      p1.green == p2.green &&
-      p1.blue == p2.blue)
-      return 1;
-  return 0;
-}
-
-
 Image grey_scale(Image img)
 {
   /*for (unsigned int i = 0; i < img.height; ++i) {
@@ -89,12 +79,17 @@ void blur(unsigned int height, unsigned short int pixel[512][512][3], int T, uns
   }
 }
 
+void rotate_image(Image img, Image rotated)
+{
+  rotated.width = img.height;
+  rotated.height = img.width;
+}
+
 Image rotate90right(Image img)
 {
   Image rotated;
 
-  rotated.width = img.height;
-  rotated.height = img.width;
+  rotate_image(img, rotated);
 
   for (unsigned int i = 0, y = 0; i < rotated.height; ++i, ++y)
   {
