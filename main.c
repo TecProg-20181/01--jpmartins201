@@ -158,6 +158,20 @@ void print_pixels(Image img)
   }
 }
 
+void read_pixels(Image img)
+{
+  // read all pixels of image
+  for (unsigned int i = 0; i < img.height; ++i)
+  {
+    for (unsigned int j = 0; j < img.width; ++j)
+    {
+      scanf("%hu %hu %hu", &img.pixel[i][j][RED],
+                           &img.pixel[i][j][GREEN],
+                           &img.pixel[i][j][BLUE]);
+    }
+  }
+}
+
 int main()
 {
   Image img;
@@ -171,15 +185,7 @@ int main()
   scanf("%u %u %d", &img.width, &img.height, &max_color);
 
   // read all pixels of image
-  for (unsigned int i = 0; i < img.height; ++i)
-  {
-    for (unsigned int j = 0; j < img.width; ++j)
-    {
-      scanf("%hu %hu %hu", &img.pixel[i][j][RED],
-                           &img.pixel[i][j][GREEN],
-                           &img.pixel[i][j][BLUE]);
-    }
-  }
+  read_pixels(img);
 
   int n_options;
   scanf("%d", &n_options);
