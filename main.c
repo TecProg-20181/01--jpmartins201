@@ -5,34 +5,26 @@
 
 
 typedef struct _pixel {
-    unsigned short int red;
-    unsigned short int green;
-    unsigned short int blue;
+  unsigned short int red;
+  unsigned short int green;
+  unsigned short int blue;
 } Pixel;
 
 typedef struct _image {
-    // [width][height][rgb]
-    unsigned short int pixel[512][512][3];
-    unsigned int width;
-    unsigned int height;
+  // [width][height][rgb]
+  unsigned short int pixel[512][512][3];
+  unsigned int width;
+  unsigned int height;
 } Image;
 
-int pixel_media(unsigned short int pixel[512][512][3],
-                int meter,
-                int counter)
+int pixel_media(unsigned short int pixel[512][512][3], int meter, int counter)
 {
-  int media = (pixel[meter][counter][0] +
-    pixel[meter][counter][1] +
-    pixel[meter][counter][2])/3;
-    return media;
+  int media = (pixel[meter][counter][0] + pixel[meter][counter][1] + pixel[meter][counter][2])/3;
+  return media;
 }
 
-void copy(unsigned short int pixel[512][512][3],
-          int media,
-          int meter,
-          int counter)
+void copy(unsigned short int pixel[512][512][3], int media, int meter, int counter)
 {
-
   pixel[meter][counter][RED] = media;
   pixel[meter][counter][GREEN] = media;
   pixel[meter][counter][BLUE] = media;
@@ -49,11 +41,20 @@ Image gray_scale(Image img)
       copy(img.pixel, media, meter, counter);
     }
   }
-
   return img;
 }
 
-void blur(unsigned int height, unsigned short int pixel[512][512][3], int T, unsigned int width)
+void pixel_blur(Pixel media, unsigned short int pixel[512][512][3], int size, unsigned int i, unsigned int j)
+{
+  media.red /= size * size;
+  media.green /= size * size;
+  media.blue /= size * size;
+  pixel[i][j][RED] = media.red;
+  pixel[i][j][GREEN] = media.green;
+  pixel[i][j][BLUE] = media.blue;
+}
+
+void blur(unsigned int height, unsigned short int pixel[512][512][3], int size, unsigned int width)
 {
   for (unsigned int i = 0; i < height; ++i)
   {
@@ -61,24 +62,19 @@ void blur(unsigned int height, unsigned short int pixel[512][512][3], int T, uns
     {
       Pixel media = {0, 0, 0};
 
-      int menor_height = (height - 1 > i + T/2) ? i + T/2 : height - 1;
-      int min_width = (width - 1 > j + T/2) ? j + T/2 : width - 1;
-      for(int x = (0 > i - T/2 ? 0 : i - T/2); x <= menor_height; ++x)
+      int menor_height = (height - 1 > i + size/2) ? i + size/2 : height - 1;
+      int min_width = (width - 1 > j + size/2) ? j + size/2 : width - 1;
+      for(int x = (0 > i - size/2 ? 0 : i - size/2); x <= menor_height; ++x)
       {
-        for(int y = (0 > j - T/2 ? 0 : j - T/2); y <= min_width; ++y)
+        for(int y = (0 > j - size/2 ? 0 : j - size/2); y <= min_width; ++y)
         {
           media.red += pixel[x][y][RED];
           media.green += pixel[x][y][GREEN];
           media.blue += pixel[x][y][BLUE];
         }
       }
+      pixel_blur(media, pixel, size, i, j);
       // printf("%u", media.r)
-      media.red /= T * T;
-      media.green /= T * T;
-      media.blue /= T * T;
-      pixel[i][j][RED] = media.red;
-      pixel[i][j][GREEN] = media.green;
-      pixel[i][j][BLUE] = media.blue;
     }
   }
 }
@@ -92,7 +88,6 @@ void rotate_image(Image img, Image rotated)
 Image rotate90right(Image img)
 {
   Image rotated;
-
   rotate_image(img, rotated);
 
   for (unsigned int i = 0, y = 0; i < rotated.height; ++i, ++y)
@@ -104,12 +99,10 @@ Image rotate90right(Image img)
       rotated.pixel[i][j][BLUE] = img.pixel[x][y][BLUE];
     }
   }
-
   return rotated;
 }
 
-void invert_colors(unsigned short int pixel[512][512][3],
-                    unsigned int width, unsigned int height)
+void invert_colors(unsigned short int pixel[512][512][3],unsigned int width, unsigned int height)
 {
   for (unsigned int i = 0; i < height; ++i)
   {
@@ -125,7 +118,6 @@ void invert_colors(unsigned short int pixel[512][512][3],
 Image cut_image(Image img, int x, int y, int width, int height)
 {
   Image cut;
-
   cut.width = width;
   cut.height = height;
 
@@ -138,22 +130,15 @@ Image cut_image(Image img, int x, int y, int width, int height)
       cut.pixel[i][j][BLUE] = img.pixel[i + y][j + x][BLUE];
     }
   }
-
   return cut;
 }
-
 
 void print_pixels(Image img)
 {
   for (unsigned int i = 0; i < img.height; ++i)
   {
     for (unsigned int j = 0; j < img.width; ++j)
-    {
-      printf("%hu %hu %hu ", img.pixel[i][j][RED],
-                            img.pixel[i][j][GREEN],
-                            img.pixel[i][j][BLUE]);
-
-    }
+      printf("%hu %hu %hu ", img.pixel[i][j][RED],img.pixel[i][j][GREEN],img.pixel[i][j][BLUE]);
     printf("\n");
   }
 }
@@ -164,11 +149,7 @@ void read_pixels(Image img)
   for (unsigned int i = 0; i < img.height; ++i)
   {
     for (unsigned int j = 0; j < img.width; ++j)
-    {
-      scanf("%hu %hu %hu", &img.pixel[i][j][RED],
-                           &img.pixel[i][j][GREEN],
-                           &img.pixel[i][j][BLUE]);
-    }
+      scanf("%hu %hu %hu", &img.pixel[i][j][RED], &img.pixel[i][j][GREEN], &img.pixel[i][j][BLUE]);
   }
 }
 
@@ -184,9 +165,7 @@ int main()
   int max_color;
   scanf("%u %u %d", &img.width, &img.height, &max_color);
 
-  // read all pixels of image
   read_pixels(img);
-
   int n_options;
   scanf("%d", &n_options);
 
@@ -302,10 +281,9 @@ int main()
       }
     }
   }
-  // print type of image
+
   printf("P3\n");
-  // print width height and color of image
   printf("%u %u\n255\n", img.width, img.height);
-  print_pixels(img);  // print pixels of image
+  print_pixels(img);
   return 0;
 }
