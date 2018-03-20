@@ -12,33 +12,47 @@ typedef struct _pixel {
 
 typedef struct _image {
     // [width][height][rgb]
-    // 0 -> red
-    // 1 -> green
-    // 2 -> blue
     unsigned short int pixel[512][512][3];
     unsigned int width;
     unsigned int height;
 } Image;
 
-Image grey_scale(Image img)
+int pixel_media(unsigned short int pixel[512][512][3],
+                int meter,
+                int counter)
+{
+  int media = (pixel[meter][counter][0] +
+    pixel[meter][counter][1] +
+    pixel[meter][counter][2])/3;
+    return media;
+}
+
+void copy(unsigned short int pixel[512][512][3],
+          int media,
+          int meter,
+          int counter)
 {
 
-  for (unsigned int i = 0; i < img.height; ++i)
+  pixel[meter][counter][RED] = media;
+  pixel[meter][counter][GREEN] = media;
+  pixel[meter][counter][BLUE] = media;
+}
+
+Image gray_scale(Image img)
+{
+  int meter, counter;
+  for (meter = 0; meter < img.height; ++meter)
   {
-    for (unsigned int j = 0; j < img.width; ++j)
+    for (counter = 0; counter < img.width; ++counter)
     {
-      int media = img.pixel[i][j][0] +
-                  img.pixel[i][j][1] +
-                  img.pixel[i][j][2];
-      media /= 3;
-      img.pixel[i][j][RED] = media;
-      img.pixel[i][j][GREEN] = media;
-      img.pixel[i][j][BLUE] = media;
+      int media = pixel_media(img.pixel, meter, counter);
+      copy(img.pixel, media, meter, counter);
     }
   }
 
   return img;
 }
+
 
 void blur(unsigned int height, unsigned short int pixel[512][512][3], int T, unsigned int width)
 {
@@ -165,7 +179,7 @@ int main()
     {
       case 1:
       { // Escala de Cinza
-        img = grey_scale(img);
+        img = gray_scale(img);
         break;
       }
       case 2:
