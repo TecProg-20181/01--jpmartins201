@@ -53,7 +53,6 @@ Image gray_scale(Image img)
   return img;
 }
 
-
 void blur(unsigned int height, unsigned short int pixel[512][512][3], int T, unsigned int width)
 {
   for (unsigned int i = 0; i < height; ++i)
@@ -144,6 +143,21 @@ Image cut_image(Image img, int x, int y, int width, int height)
 }
 
 
+void print_pixels(Image img)
+{
+  for (unsigned int i = 0; i < img.height; ++i)
+  {
+    for (unsigned int j = 0; j < img.width; ++j)
+    {
+      printf("%hu %hu %hu ", img.pixel[i][j][RED],
+                            img.pixel[i][j][GREEN],
+                            img.pixel[i][j][BLUE]);
+
+    }
+    printf("\n");
+  }
+}
+
 int main()
 {
   Image img;
@@ -167,15 +181,15 @@ int main()
     }
   }
 
-  int n_opcoes;
-  scanf("%d", &n_opcoes);
+  int n_options;
+  scanf("%d", &n_options);
 
-  for(int i = 0; i < n_opcoes; ++i)
+  for(int i = 0; i < n_options; ++i)
   {
-    int opcao;
-    scanf("%d", &opcao);
+    int option;
+    scanf("%d", &option);
 
-    switch(opcao)
+    switch(option)
     {
       case 1:
       { // Escala de Cinza
@@ -217,10 +231,10 @@ int main()
       }
       case 4:
       { // Rotacao
-        int quantas_vezes = 0;
-        scanf("%d", &quantas_vezes);
-        quantas_vezes %= 4;
-        for (int j = 0; j < quantas_vezes; ++j)
+        int turns = 0;
+        scanf("%d", &turns);
+        turns %= 4;
+        for (int j = 0; j < turns; ++j)
         {
           img = rotate90right(img);
         }
@@ -282,23 +296,10 @@ int main()
       }
     }
   }
-
   // print type of image
   printf("P3\n");
   // print width height and color of image
   printf("%u %u\n255\n", img.width, img.height);
-
-  // print pixels of image
-  for (unsigned int i = 0; i < img.height; ++i)
-  {
-    for (unsigned int j = 0; j < img.width; ++j)
-    {
-      printf("%hu %hu %hu ", img.pixel[i][j][RED],
-                            img.pixel[i][j][GREEN],
-                            img.pixel[i][j][BLUE]);
-
-    }
-  printf("\n");
-  }
+  print_pixels(img);  // print pixels of image
   return 0;
 }
