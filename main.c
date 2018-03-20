@@ -16,14 +16,6 @@ typedef struct _image {
     unsigned int height;
 } Image;
 
-
-int max(int a, int b)
-{
-  if (a > b)
-      return a;
-  return b;
-}
-
 Image grey_scale(Image img)
 {
   /*for (unsigned int i = 0; i < img.height; ++i) {
